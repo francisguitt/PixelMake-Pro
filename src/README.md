@@ -11,16 +11,13 @@ Sem instalação. Sem servidor. Sem limites.
 ## 📸 Preview do Projeto
 
 ### 🖼️ Editor Principal
-![Editor Principal](assets/screenshots/screen1)
+![Editor Principal](assets/screenshots/screen1.png)
 
 ### 🧱 Sistema de Camadas
-![Sistema de Camadas](assets/screenshots/screen2)
+![Sistema de Camadas](assets/screenshots/screen2.png)
 
 ### 🎛️ Ajustes e Efeitos
-![Ajustes de Imagem](assets/screenshots/screen3)
-
-### 📤 Exportação
-![Exportação](assets/screenshots/export.png)
+![Ajustes de Imagem](assets/screenshots/screen3.png)
 
 ---
 
@@ -28,7 +25,7 @@ Sem instalação. Sem servidor. Sem limites.
 
 | Antes | Depois |
 |------|--------|
-| ![](assets/screenshots/screen3) | ![](assets/screenshots/screen2) |
+| ![](assets/screenshots/screen3.png) | ![](assets/screenshots/screen2.png) |
 
 ---
 
