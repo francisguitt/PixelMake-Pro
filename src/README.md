@@ -25,7 +25,7 @@ Sem instalação. Sem servidor. Sem limites.
 
 | Antes | Depois |
 |------|--------|
-| ![](assets/screenshots/screen3.png) | ![](assets/screenshots/screen2.png) |
+| ![](assets/screenshots/screen2.png) | ![](assets/screenshots/screen1.png) |
 
 ---
 
