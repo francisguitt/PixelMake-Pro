@@ -31,7 +31,7 @@ Sem instalação. Sem servidor. Sem limites.
 
 ## 📌 Sobre o Projeto
 
-O **PixelForge Pro** é um editor de imagens profissional que funciona inteiramente no navegador.  
+O **PixelMake Pro** é um editor de imagens profissional que funciona inteiramente no navegador.  
 Ele permite criar montagens com múltiplas imagens, aplicar efeitos, remover fundos, adicionar textos, formas e muito mais — tudo de graça e sem precisar instalar nada.
 
 ---
