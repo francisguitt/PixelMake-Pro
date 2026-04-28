@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PixelMake Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- HEADER -->
+      <div class="hdr">
+        <div class="logo">
+          <div class="logo-i">PM</div>
+          <div>
+            <h1>PixelMake Pro</h1>
+            <small>Camadas · Montagens · Blend Modes</small>
+          </div>
+        </div>
+        <div class="hdr-btns">
+          <button class="btn" id="btnUndo" onclick="undo()" disabled>
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12.5 8c-2.65 0-5.05 1.04-6.83 2.73L3 8v9h9l-2.83-2.83C10.55 12.79 12.2 12 14 12c2.97 0 5.45 2.25 5.91 5.15l1.89-.32C21.28 13.42 18.01 11 14 11c-1.66 0-3.19.52-4.46 1.4L12.5 10l3-3-3-3-.5.5z"
+              /></svg
+            >Desfazer
+          </button>
+          <button class="btn" id="btnRedo" onclick="redo()" disabled>
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.16 0-7.74 2.42-9.44 5.93l1.89.32C4.45 11.25 6.92 9 9.5 9c2.19 0 4.18.89 5.61 2.32L12.5 14l3 3 3-3-.5-.5 2.4-2.4z"
+              /></svg
+            >Refazer
+          </button>
+          <button
+            class="btn btn-ac"
+            id="btnDL"
+            onclick="doDownload()"
+            style="display: none"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg
+            >Baixar
+          </button>
+          <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">
+            🌙
+          </button>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="body">
+        <!-- SIDEBAR -->
+        <div class="sb">
+          <div class="sb-scroll" id="sbScroll">
+            <!-- PROJETO -->
+            <div class="pnl" id="pProj">
+              <div class="pt">Projeto</div>
+              <div id="upArea">
+                <div class="upz" id="upZone">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"
+                    />
+                  </svg>
+                  <p>
+                    Arraste ou <span class="hl">clique para selecionar</span>
+                  </p>
+                  <p
+                    style="
+                      font-size: 0.56rem;
+                      margin-top: 2px;
+                      color: var(--t3);
+                    "
+                  >
+                    Multiplas imagens · PNG JPG WEBP SVG
+                  </p>
+                  <input type="file" id="fIn" accept="image/*" multiple />
+                </div>
+              </div>
+              <div id="addArea" style="display: none">
+                <div style="display: flex; gap: 4px; margin-bottom: 10px">
+                  <button
+                    class="btn btn-sm"
+                    onclick="$('fIn2').click()"
+                    style="flex: 1; justify-content: center"
+                  >
+                    + Adicionar Imagem
+                  </button>
+                  <button class="btn btn-dn btn-sm" onclick="delActive()">
+                    Excluir
+                  </button>
+                </div>
+                <input
+                  type="file"
+                  id="fIn2"
+                  accept="image/*"
+                  multiple
+                  style="display: none"
+                />
+                <div class="tg">
+                  <span class="tl">Tamanho do Canvas</span>
+                  <div style="display: flex; gap: 6px">
+                    <div style="flex: 1">
+                      <span class="tl">Largura</span
+                      ><input type="number" id="cvsW" value="800" />
+                    </div>
+                    <div style="flex: 1">
+                      <span class="tl">Altura</span
+                      ><input type="number" id="cvsH" value="600" />
+                    </div>
+                  </div>
+                </div>
+                <div class="tg">
+                  <span class="tl">Fundo do Canvas</span>
+                  <div style="display: flex; gap: 6px; align-items: center">
+                    <input type="color" id="cvsBg" value="#000000" />
+                    <label class="cr"
+                      ><input type="checkbox" id="cvsBgT" /><span
+                        class="cb"
+                      ></span
+                      ><span class="ct">Transparente</span></label
+                    >
+                  </div>
+                </div>
+                <div class="tg">
+                  <span class="tl">Gradiente</span>
+                  <div class="fp" style="margin-bottom: 6px">
+                    <div class="fpp" data-gr="none" onclick="setGrad('none')">
+                      Nenhum
+                    </div>
+                    <div
+                      class="fpp"
+                      data-gr="linear"
+                      onclick="setGrad('linear')"
+                    >
+                      Linear
+                    </div>
+                    <div
+                      class="fpp"
+                      data-gr="radial"
+                      onclick="setGrad('radial')"
+                    >
+                      Radial
+                    </div>
+                  </div>
+                  <div id="gradOpts" style="display: none">
+                    <div
+                      style="
+                        display: flex;
+                        gap: 6px;
+                        align-items: center;
+                        margin-bottom: 6px;
+                      "
+                    >
+                      <input type="color" id="gC1" value="#0a0a0c" />
+                      <span style="font-size: 0.6rem; color: var(--t2)">→</span>
+                      <input type="color" id="gC2" value="#00e5a0" />
+                    </div>
+                    <div class="tg">
+                      <div class="rw">
+                        <div class="rh">
+                          <span>Angulo</span><span class="rv" id="vGA">0°</span>
+                        </div>
+                        <input
+                          type="range"
+                          id="sGA"
+                          min="0"
+                          max="360"
+                          value="0"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tg">
+                  <span class="tl">Presets de Canvas</span>
+                  <div class="preset-cards">
+                    <div class="preset-card" onclick="setPreset(1080, 1080)">
+                      <div class="pc-n">Instagram</div>
+                      <div class="pc-s">1080x1080</div>
+                    </div>
+                    <div class="preset-card" onclick="setPreset(1080, 1920)">
+                      <div class="pc-n">Stories</div>
+                      <div class="pc-s">1080x1920</div>
+                    </div>
+                    <div class="preset-card" onclick="setPreset(1280, 720)">
+                      <div class="pc-n">YouTube</div>
+                      <div class="pc-s">1280x720</div>
+                    </div>
+                    <div class="preset-card" onclick="setPreset(1920, 1080)">
+                      <div class="pc-n">Full HD</div>
+                      <div class="pc-s">1920x1080</div>
+                    </div>
+                    <div class="preset-card" onclick="setPreset(3840, 2160)">
+                      <div class="pc-n">4K</div>
+                      <div class="pc-s">3840x2160</div>
+                    </div>
+                    <div class="preset-card" onclick="setPreset(500, 500)">
+                      <div class="pc-n">Avatar</div>
+                      <div class="pc-s">500x500</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CAMADAS -->
+            <div class="pnl" id="pLy" style="display: none">
+              <div class="pt">Camadas</div>
+              <div class="ly-list" id="lyList"></div>
+              <div class="tg">
+                <span class="tl">Opacidade</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vOp">100%</span>
+                  </div>
+                  <input type="range" id="sOp" min="0" max="100" value="100" />
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Modo de Mistura</span>
+                <select class="blend-sel" id="blendSel">
+                  <option value="source-over">Normal</option>
+                  <option value="multiply">Multiply</option>
+                  <option value="screen">Screen</option>
+                  <option value="overlay">Overlay</option>
+                  <option value="darken">Darken</option>
+                  <option value="lighten">Lighten</option>
+                  <option value="color-dodge">Color Dodge</option>
+                  <option value="color-burn">Color Burn</option>
+                  <option value="hard-light">Hard Light</option>
+                  <option value="soft-light">Soft Light</option>
+                  <option value="difference">Difference</option>
+                  <option value="exclusion">Exclusion</option>
+                  <option value="hue">Hue</option>
+                  <option value="saturation">Saturation</option>
+                  <option value="color">Color</option>
+                  <option value="luminosity">Luminosity</option>
+                </select>
+              </div>
+              <div class="tg">
+                <span class="tl">Tamanho da Camada</span>
+                <div style="display: flex; gap: 6px">
+                  <div style="flex: 1">
+                    <span class="tl">Largura</span
+                    ><input type="number" id="lyW" placeholder="W" />
+                  </div>
+                  <div style="flex: 1">
+                    <span class="tl">Altura</span
+                    ><input type="number" id="lyH" placeholder="H" />
+                  </div>
+                </div>
+                <label class="cr"
+                  ><input type="checkbox" id="lyR" checked /><span
+                    class="cb"
+                  ></span
+                  ><span class="ct">Manter Proporcao</span></label
+                >
+              </div>
+              <div class="ly-btns">
+                <button class="btn btn-sm" onclick="rotAct(-90)">↺ 90</button>
+                <button class="btn btn-sm" onclick="rotAct(90)">↻ 90</button>
+                <button class="btn btn-sm" onclick="flipAct('h')">⇔ H</button>
+                <button class="btn btn-sm" onclick="flipAct('v')">⇕ V</button>
+                <button class="btn btn-sm" onclick="dupAct()">Duplicar</button>
+                <button class="btn btn-sm" onclick="bringFront()">Topo</button>
+                <button class="btn btn-sm" onclick="sendBack()">Base</button>
+                <button class="btn btn-sm" onclick="mergeDown()">
+                  Mesclar
+                </button>
+              </div>
+              <div class="adj-dv"></div>
+              <span class="tl">Alinhar ao Canvas</span>
+              <div class="align-grid">
+                <div class="align-btn" onclick="alignTo('l')" title="Esquerda">
+                  ↤
+                </div>
+                <div class="align-btn" onclick="alignTo('ch')" title="Centro H">
+                  ↔
+                </div>
+                <div class="align-btn" onclick="alignTo('r')" title="Direita">
+                  ↦
+                </div>
+                <div class="align-btn" onclick="alignTo('t')" title="Topo">
+                  ↥
+                </div>
+                <div class="align-btn" onclick="alignTo('cv')" title="Centro V">
+                  ↕
+                </div>
+                <div class="align-btn" onclick="alignTo('b')" title="Baixo">
+                  ↧
+                </div>
+              </div>
+              <div class="adj-dv"></div>
+              <span class="tl">Sombra da Camada</span>
+              <label class="cr"
+                ><input type="checkbox" id="shOn" /><span class="cb"></span
+                ><span class="ct">Ativar Sombra</span></label
+              >
+              <div class="tg">
+                <div class="rw">
+                  <div class="rh">
+                    <span>Offset X</span><span class="rv" id="vShX">4</span>
+                  </div>
+                  <input type="range" id="sShX" min="-30" max="30" value="4" />
+                </div>
+              </div>
+              <div class="tg">
+                <div class="rw">
+                  <div class="rh">
+                    <span>Offset Y</span><span class="rv" id="vShY">4</span>
+                  </div>
+                  <input type="range" id="sShY" min="-30" max="30" value="4" />
+                </div>
+              </div>
+              <div class="tg">
+                <div class="rw">
+                  <div class="rh">
+                    <span>Desfoque</span><span class="rv" id="vShB">8</span>
+                  </div>
+                  <input type="range" id="sShB" min="0" max="40" value="8" />
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Cor da Sombra</span>
+                <div style="display: flex; gap: 6px; align-items: center">
+                  <input type="color" id="shCol" value="#000000" /><span
+                    style="font-size: 0.62rem; color: var(--t2)"
+                    id="shColH"
+                    >#000000</span
+                  >
+                </div>
+              </div>
+              <div class="adj-dv"></div>
+              <span class="tl">Borda da Camada</span>
+              <label class="cr"
+                ><input type="checkbox" id="brdOn" /><span class="cb"></span
+                ><span class="ct">Ativar Borda</span></label
+              >
+              <div class="tg">
+                <div class="rw">
+                  <div class="rh">
+                    <span>Espessura</span><span class="rv" id="vBrd">3</span>
+                  </div>
+                  <input type="range" id="sBrd" min="1" max="20" value="3" />
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Cor da Borda</span>
+                <div style="display: flex; gap: 6px; align-items: center">
+                  <input type="color" id="brdCol" value="#ffffff" /><span
+                    style="font-size: 0.62rem; color: var(--t2)"
+                    id="brdColH"
+                    >#ffffff</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- ELEMENTOS -->
+            <div class="pnl" id="pElem" style="display: none">
+              <div class="pt">Elementos</div>
+              <div class="fp" style="margin-bottom: 10px">
+                <div
+                  class="fpp active"
+                  data-el="shapes"
+                  onclick="setElTab('shapes')"
+                >
+                  Formas
+                </div>
+                <div class="fpp" data-el="text" onclick="setElTab('text')">
+                  Texto
+                </div>
+                <div class="fpp" data-el="emoji" onclick="setElTab('emoji')">
+                  Emoji
+                </div>
+              </div>
+              <div id="tabShapes">
+                <div class="shape-grid">
+                  <div
+                    class="shape-btn active"
+                    data-sh="rect"
+                    onclick="setShape('rect')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <rect
+                        x="3"
+                        y="3"
+                        width="18"
+                        height="18"
+                        rx="2"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="shape-btn"
+                    data-sh="circle"
+                    onclick="setShape('circle')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="shape-btn"
+                    data-sh="triangle"
+                    onclick="setShape('triangle')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polygon
+                        points="12,3 22,21 2,21"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="shape-btn"
+                    data-sh="star"
+                    onclick="setShape('star')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polygon
+                        points="12,2 15,9 22,9 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9 9,9"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="shape-btn"
+                    data-sh="diamond"
+                    onclick="setShape('diamond')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <polygon
+                        points="12,2 22,12 12,22 2,12"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="shape-btn"
+                    data-sh="line"
+                    onclick="setShape('line')"
+                  >
+                    <svg viewBox="0 0 24 24">
+                      <line
+                        x1="4"
+                        y1="20"
+                        x2="20"
+                        y2="4"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 6px; margin-bottom: 8px">
+                  <div style="flex: 1">
+                    <span class="tl">Tamanho</span
+                    ><input type="number" id="shSz" value="120" min="10" />
+                  </div>
+                  <div>
+                    <span class="tl">Cor</span
+                    ><input type="color" id="shCol2" value="#00e5a0" />
+                  </div>
+                </div>
+                <label class="cr"
+                  ><input type="checkbox" id="shFill" checked /><span
+                    class="cb"
+                  ></span
+                  ><span class="ct">Preenchido</span></label
+                >
+                <button
+                  class="btn btn-ac btn-sm"
+                  onclick="addShape()"
+                  style="width: 100%; justify-content: center; margin-top: 8px"
+                >
+                  Adicionar Forma
+                </button>
+              </div>
+              <div id="tabText" style="display: none">
+                <div class="tg">
+                  <span class="tl">Conteudo do Texto</span
+                  ><input type="text" id="txtIn" placeholder="Digite aqui..." />
+                </div>
+                <div style="display: flex; gap: 6px; margin-bottom: 8px">
+                  <div style="flex: 1">
+                    <span class="tl">Tamanho</span
+                    ><input type="number" id="txtSz" value="48" min="8" />
+                  </div>
+                  <div>
+                    <span class="tl">Cor</span
+                    ><input type="color" id="txtCol" value="#ffffff" />
+                  </div>
+                </div>
+                <div class="tg">
+                  <span class="tl">Fonte</span>
+                  <select id="txtFont">
+                    <option>Syne</option>
+                    <option>DM Mono</option>
+                    <option>Arial</option>
+                    <option>Georgia</option>
+                    <option>Courier New</option>
+                    <option>Impact</option>
+                    <option>Verdana</option>
+                    <option>Times New Roman</option>
+                  </select>
+                </div>
+                <label class="cr"
+                  ><input type="checkbox" id="txtBold" /><span class="cb"></span
+                  ><span class="ct">Negrito</span></label
+                >
+                <label class="cr"
+                  ><input type="checkbox" id="txtItalic" /><span
+                    class="cb"
+                  ></span
+                  ><span class="ct">Italico</span></label
+                >
+                <button
+                  class="btn btn-ac btn-sm"
+                  onclick="addTxt()"
+                  style="width: 100%; justify-content: center; margin-top: 8px"
+                >
+                  Adicionar Texto
+                </button>
+              </div>
+              <div id="tabEmoji" style="display: none">
+                <p
+                  style="
+                    font-size: 0.66rem;
+                    color: var(--t2);
+                    margin-bottom: 6px;
+                  "
+                >
+                  Clique para adicionar como camada
+                </p>
+                <div class="emoji-grid" id="emoGrid"></div>
+              </div>
+            </div>
+
+            <!-- EDITAR -->
+            <div class="pnl" id="pEdit" style="display: none">
+              <div class="pt">Editar Camada</div>
+              <div class="tg">
+                <span class="tl">Ferramenta</span>
+                <div class="fp">
+                  <div
+                    class="fpp active"
+                    data-md="magic"
+                    onclick="setMode('magic')"
+                  >
+                    Varinha
+                  </div>
+                  <div class="fpp" data-md="eraser" onclick="setMode('eraser')">
+                    Borracha
+                  </div>
+                  <div class="fpp" data-md="paint" onclick="setMode('paint')">
+                    Pincel
+                  </div>
+                  <div class="fpp" data-md="bucket" onclick="setMode('bucket')">
+                    Balde
+                  </div>
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Tolerancia</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vTol">50</span>
+                  </div>
+                  <input type="range" id="sTol" min="1" max="200" value="50" />
+                </div>
+              </div>
+              <div class="tg" id="gBrush">
+                <span class="tl">Tamanho do Pincel</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vBr2">20</span>
+                  </div>
+                  <input type="range" id="sBr2" min="1" max="150" value="20" />
+                </div>
+              </div>
+              <div class="tg" id="gPaintCol" style="display: none">
+                <span class="tl">Cor do Pincel / Balde</span>
+                <div style="display: flex; gap: 6px; align-items: center">
+                  <input type="color" id="paintCol" value="#ff0000" /><span
+                    style="font-size: 0.62rem; color: var(--t2)"
+                    id="paintColH"
+                    >#ff0000</span
+                  >
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Cor Alvo (Varinha)</span>
+                <div
+                  style="
+                    width: 100%;
+                    height: 24px;
+                    border-radius: var(--r2);
+                    border: 1px solid var(--bd);
+                    cursor: crosshair;
+                    background: #fff;
+                  "
+                  id="swatch"
+                ></div>
+                <p
+                  style="font-size: 0.58rem; color: var(--t3); margin-top: 3px"
+                >
+                  Clique no swatch e depois na imagem
+                </p>
+              </div>
+              <div style="display: flex; gap: 6px; margin-top: 6px">
+                <button
+                  class="btn btn-ac btn-sm"
+                  onclick="rmBgAll()"
+                  style="flex: 1; justify-content: center"
+                >
+                  Remover Fundo
+                </button>
+                <button class="btn btn-dn btn-sm" onclick="resetAct()">
+                  ↺ Reset
+                </button>
+              </div>
+              <div class="adj-dv"></div>
+              <span class="tl">Recorte do Canvas</span>
+              <p
+                style="font-size: 0.64rem; color: var(--t2); margin-bottom: 8px"
+              >
+                Clique e arraste na imagem para recortar
+              </p>
+              <div id="cropInfo" class="cs" style="display: none"></div>
+              <div style="display: flex; gap: 6px">
+                <button
+                  class="btn btn-ac btn-sm"
+                  id="btnCA"
+                  onclick="applyCrop()"
+                  style="display: none; flex: 1; justify-content: center"
+                >
+                  Aplicar Recorte
+                </button>
+                <button
+                  class="btn btn-sm"
+                  id="btnCC"
+                  onclick="cancelCrop()"
+                  style="display: none"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+
+            <!-- AJUSTES -->
+            <div class="pnl" id="pAdj" style="display: none">
+              <div class="pt">Ajustes de Cor</div>
+              <div class="presets-row">
+                <div
+                  class="p-chip active"
+                  data-p="normal"
+                  onclick="usePre('normal')"
+                >
+                  Normal
+                </div>
+                <div
+                  class="p-chip"
+                  data-p="vintage"
+                  onclick="usePre('vintage')"
+                >
+                  Vintage
+                </div>
+                <div class="p-chip" data-p="bw" onclick="usePre('bw')">P&B</div>
+                <div class="p-chip" data-p="warm" onclick="usePre('warm')">
+                  Quente
+                </div>
+                <div class="p-chip" data-p="cool" onclick="usePre('cool')">
+                  Frio
+                </div>
+                <div class="p-chip" data-p="drama" onclick="usePre('drama')">
+                  Drama
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Brilho</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vBr">0</span>
+                  </div>
+                  <input type="range" id="sBr" min="-100" max="100" value="0" />
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Contraste</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vCo">0</span>
+                  </div>
+                  <input type="range" id="sCo" min="-100" max="100" value="0" />
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Saturacao</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vSa">0</span>
+                  </div>
+                  <input type="range" id="sSa" min="-100" max="100" value="0" />
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Matiz</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vHu">0°</span>
+                  </div>
+                  <input type="range" id="sHu" min="0" max="360" value="0" />
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Temperatura</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vTe">0</span>
+                  </div>
+                  <input type="range" id="sTe" min="-100" max="100" value="0" />
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Vinheta</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vVi">0</span>
+                  </div>
+                  <input type="range" id="sVi" min="0" max="100" value="0" />
+                </div>
+              </div>
+              <div class="tg">
+                <span class="tl">Desfoque</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vBl">0</span>
+                  </div>
+                  <input type="range" id="sBl" min="0" max="20" value="0" />
+                </div>
+              </div>
+              <div class="adj-dv"></div>
+              <button
+                class="btn btn-sm"
+                onclick="resetAdj()"
+                style="width: 100%; justify-content: center"
+              >
+                Resetar Todos os Ajustes
+              </button>
+            </div>
+
+            <!-- EXPORTAR -->
+            <div class="pnl" id="pExp" style="display: none">
+              <div class="pt">Exportar</div>
+              <div class="tg">
+                <span class="tl">Formato de Saida</span>
+                <div class="fp" id="fmtP">
+                  <div class="fpp active" data-f="png" onclick="setFmt('png')">
+                    PNG
+                  </div>
+                  <div class="fpp" data-f="jpeg" onclick="setFmt('jpeg')">
+                    JPEG
+                  </div>
+                  <div class="fpp" data-f="webp" onclick="setFmt('webp')">
+                    WEBP
+                  </div>
+                </div>
+              </div>
+              <div class="tg" id="gQ" style="display: none">
+                <span class="tl">Qualidade</span>
+                <div class="rw">
+                  <div class="rh">
+                    <span></span><span class="rv" id="vQu">92%</span>
+                  </div>
+                  <input type="range" id="sQu" min="1" max="100" value="92" />
+                </div>
+              </div>
+              <button
+                class="btn btn-ac"
+                onclick="doDownload()"
+                style="width: 100%; margin-top: 10px; justify-content: center"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" /></svg
+                >Exportar e Baixar
+              </button>
+            </div>
+
+            <!-- INFO -->
+            <div class="pnl" id="pInfo" style="display: none">
+              <div class="pt">Informacoes</div>
+              <div style="display: flex; gap: 8px">
+                <div style="flex: 1">
+                  <span class="tl">Canvas</span>
+                  <div style="font-size: 0.7rem; font-weight: 500" id="iDim">
+                    —
+                  </div>
+                </div>
+                <div style="flex: 1">
+                  <span class="tl">Camadas</span>
+                  <div style="font-size: 0.7rem; font-weight: 500" id="iLy">
+                    —
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- HISTORICO -->
+            <div class="pnl" id="pHist" style="display: none">
+              <div class="pt">Historico</div>
+              <div class="hl-list" id="hList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CANVAS AREA -->
+        <div class="canvas-area">
+          <div class="cvs-tb" id="toolbar" style="display: none">
+            <div class="g">
+              <button class="tbn" onclick="zi()" title="Zoom +">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM12 10h-2v2H9v-2H7V9h2V7h1v2h2v1z"
+                  />
+                </svg>
+              </button>
+              <button class="tbn" onclick="zo()" title="Zoom -">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM7 9h5v1H7z"
+                  />
+                </svg>
+              </button>
+              <button class="tbn" onclick="fitV()" title="Ajustar">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M3 5v4h2V5h4V3H5C3.9 3 3 3.9 3 5zm2 10H3v4c0 1.1.9 2 2 2h4v-2H5v-4zm14 4h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4zm0-16h-4v2h4v4h2V5c0-1.1-.9-2-2-2z"
+                  />
+                </svg>
+              </button>
+              <button
+                class="tbn"
+                id="btnGrid"
+                onclick="togGrid()"
+                title="Grade"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H4v-4h4v4zm0-6H4v-4h4v4zm0-6H4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4z"
+                  />
+                </svg>
+              </button>
+              <span class="zd" id="zV">100%</span>
+            </div>
+            <div class="g"><span class="it" id="cXY">—</span></div>
+          </div>
+
+          <div class="viewport viewport-bg" id="cWrap">
+            <div class="empty-st" id="eSt">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"
+                />
+              </svg>
+              <h3>Nenhuma imagem carregada</h3>
+              <p>Arraste imagens ou use o painel lateral para comecar.</p>
+            </div>
+            <div class="cvs-wrap cc" id="cCont" style="display: none">
+              <canvas id="mainCvs"></canvas>
+              <canvas id="ovCvs"></canvas>
+            </div>
+          </div>
+
+          <div class="cvs-st" id="sBar" style="display: none">
+            <span class="it" id="sTxt">Pronto</span>
+            <button
+              class="btn btn-sm"
+              id="btnCmp"
+              onmousedown="showOrig()"
+              onmouseup="showCur()"
+              onmouseleave="showCur()"
+              style="display: none"
+            >
+              Comparar Original
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="er-cur" id="erCur"></div>
+    <div class="tc" id="toasts"></div>
+    <a id="dlA" style="display: none"></a>
+
+    <script src="./scripts/index.js"></script>
+  </body>
+</html>
